@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "memlab"
+version = "0.1.0"
+description = "Multi-level agent memory components and experiment bookkeeping."
+requires-python = ">=3.12"
+dependencies = ["pydantic>=2.8.2,<3", "PyYAML>=6.0.2,<7", "httpx>=0.28.1,<1", "numpy>=2.1.1,<3"]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.3.2,<10", "redis>=5.0.8,<7"]
+infra = ["redis>=5.0.8,<7", "asyncpg>=0.30.0,<1"]
+benchmarks = ["huggingface_hub>=0.24.6,<2", "pandas>=2.2.2,<4", "pyarrow>=17.0.0"]
+
+[tool.setuptools.packages.find]
+include = ["memlab*", "benchmarks*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

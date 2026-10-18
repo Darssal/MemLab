@@ -1,0 +1,68 @@
+experiment:
+  run_id: F1
+  variant_id: F1
+  seed: 42
+  repetitions: 3
+  n_agents: 50
+  duration_s: 300
+  llm_backend: stub
+  redis_policy: allkeys-lfu
+  summarization_on: true
+  output_dir: ./runs
+  logs_dir: ./runs
+
+memory:
+  enabled_tiers:
+    - L0
+    - L1
+    - L2
+    - L3
+  l0:
+    max_prompt_tokens: 8000
+    max_memory_injection_tokens: 2000
+    max_injected_tokens: 256
+    keep_recent_messages: 10
+    summarize_trigger_tokens: 7000
+    summarize_target_tokens: 3000
+    min_relevance_score: 0.20
+  l1:
+    enabled: true
+    ttl_s: 300
+    max_object_bytes: 65536
+    reuse_threshold: 0.20
+  l2:
+    enabled: true
+    vector_enabled: true
+    vector_backend: qdrant
+    qdrant_shard_number: 1
+    default_top_k: 8
+    collection_name: memlab_docs
+    write_batch_size: 512
+    write_flush_interval_ms: 50
+    min_write_importance: 0.70
+    max_batch_per_flush: 512
+    max_flush_ms: 50
+    drop_queue_depth_threshold: 12000
+    backpressure_drop_importance_threshold: 0.85
+    embedding_cache_ttl_ms: 120000
+    retrieval_cache_ttl_ms: 15000
+  l3:
+    enabled: false
+    root_dir: ./storage/l3_objects
+    pointer_threshold_bytes: 65536
+    pointer_preview_chars: 240
+  policy:
+    packing_budget: balanced
+    checkpoint_policy: l2_only
+    direct_evidence_retrieval_bypass: true
+
+services:
+  redis_url: redis://127.0.0.1:6379/0
+  pg_uri: "" # Set PG_URI in your private environment before using Postgres.
+  qdrant_url: http://127.0.0.1:6333
+  qdrant_collection: memlab_docs
+
+workloads:
+  corpus_path: ./data/docs.jsonl
+  tasks_path: ./data/tasks.jsonl
+  trace_path: ./traces/trace_200a.jsonl
